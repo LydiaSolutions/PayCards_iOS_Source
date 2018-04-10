@@ -251,9 +251,23 @@ void CRecognitionCoreDelegate::CardImageDidExtract(cv::Mat cardImage)
 {
     UIImage *image = [WOUtils imageFromMat:cardImage];
     
+    UIGraphicsBeginImageContext(image.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextScaleCTM(context, 1, 1);
+    [image drawAtPoint:CGPointZero];
+
+    [[UIColor redColor] setFill];
+    
+    CGRect displayRect = _result.recognizedNumberRect;
+    //removing mask on the last 4 digits
+    displayRect = CGRectMake(displayRect.origin.x, displayRect.origin.y, displayRect.size.width*0.75, displayRect.size.height);
+    CGContextFillRect(context, displayRect);
+    UIImage *renderedImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
     dispatch_sync(dispatch_get_main_queue(), ^{
         
-        _result.image = image;
+        _result.image = renderedImage;
         
         if (_recognizer.resultMode == PayCardsRecognizerResultModeAsync) {
             [_delegate payCardsRecognizer:_recognizer didRecognize:_result];
