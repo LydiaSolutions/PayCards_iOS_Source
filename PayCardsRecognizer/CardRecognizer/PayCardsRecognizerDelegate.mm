@@ -40,10 +40,6 @@ static const std::vector<string> alphabet = {" ","A","B","C","D","E","F","G","H"
 
 @property (nonatomic, assign) PayCardsRecognizerMode recognizerMode;
 
-- (void)placeNumber:(NSString *)number;
-- (void)placeDate:(NSString *)date;
-- (void)placeName:(NSString *)name;
-
 @end
 
 @implementation PayCardsRecognizerDelegate
@@ -121,10 +117,6 @@ void CRecognitionCoreDelegate::CardImageDidExtract(cv::Mat cardImage)
             [resultDict setObject:numberConfidences forKey:WONumberConfidences];
             
             [resultDict setObject:[NSValue valueWithCGRect:CGRectMake(result->GetNumberRect().x, result->GetNumberRect().y, result->GetNumberRect().width, result->GetNumberRect().height)] forKey:WOPanRect];
-            
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                [self.recognizer placeNumber:numberStr];
-            });
         }
     }
 
@@ -145,10 +137,6 @@ void CRecognitionCoreDelegate::CardImageDidExtract(cv::Mat cardImage)
             [resultDict setObject:dateConfidences forKey:WOExpDateConfidences];
             
             [resultDict setObject:[NSValue valueWithCGRect:CGRectMake(result->GetDateRect().x, result->GetDateRect().y, result->GetDateRect().width, result->GetDateRect().height)] forKey:WODateRect];
-            
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                [self.recognizer placeDate:dateStr];
-            });
         }
     }
     
@@ -172,10 +160,6 @@ void CRecognitionCoreDelegate::CardImageDidExtract(cv::Mat cardImage)
             
             [resultDict setObject:nameStr forKey:WOHolderNameRaw];
             [resultDict setObject:nameConfidences forKey:WOHolderNameConfidences];
-            
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                [self.recognizer placeName:[NSString stringWithUTF8String:name.c_str()]];
-            });
         }
     }
     
