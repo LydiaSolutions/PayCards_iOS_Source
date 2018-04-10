@@ -113,8 +113,6 @@ using namespace std;
 
 @property (nonatomic, strong) UIImageView *frameImageView;
 
-@property (nonatomic, strong) UIView *labelsHolderView;
-
 @property (nonatomic, assign) shared_ptr<IRecognitionCore> recognitionCore;
 
 @property (nonatomic, strong) WOEdgesWrapperView *edgesWrapperView;
@@ -122,12 +120,6 @@ using namespace std;
 @property (nonatomic, strong) GPUImageView *view;
 
 @property (nonatomic, weak) UIView *container;
-
-@property (nonatomic, strong) UILabel *recognizedNumberLabel;
-
-@property (nonatomic, strong) UILabel *recognizedNameLabel;
-
-@property (nonatomic, strong) UILabel *recognizedDateLabel;
 
 @property (nonatomic, assign) PayCardsRecognizerResultMode resultMode;
 
@@ -240,9 +232,6 @@ using namespace std;
     self.edgesWrapperView = nil;
     self.widthConstraint = nil;
     self.heightConstraint = nil;
-    self.recognizedNumberLabel.text = @" ";
-    self.recognizedDateLabel.text = @" ";
-    self.recognizedNameLabel.text = @" ";
 }
 
 - (void)startCamera {
@@ -395,32 +384,6 @@ using namespace std;
 
 @end
 
-@implementation PayCardsRecognizer (CardDataDrawer)
-
-- (CGFloat)fontSize:(CGFloat)base {
-    CGFloat scale = self.labelsHolderView.bounds.size.width / 374;
-    CGFloat fontSize = base * scale;
-    return fontSize;
-}
-
-- (void)placeNumber:(NSString *)number {
-    
-    self.recognizedNumberLabel.text = [number formatCreditCard];
-    self.recognizedNumberLabel.font = [UIFont systemFontOfSize:[self fontSize:26]];
-}
-
-- (void)placeDate:(NSString *)date {
-    self.recognizedDateLabel.text = [date formatDate];
-    self.recognizedDateLabel.font = [UIFont systemFontOfSize:[self fontSize:17]];
-}
-
-- (void)placeName:(NSString *)name {
-    self.recognizedNameLabel.text = name;
-    self.recognizedNameLabel.font = [UIFont systemFontOfSize:[self fontSize:19]];
-}
-
-@end
-
 @implementation PayCardsRecognizer (UIInitializations)
 
 - (UIView *)view {
@@ -447,13 +410,6 @@ using namespace std;
     
     _widthConstraint = [_view addConstraintWithItem:self.frameImageView attribute:NSLayoutAttributeWidth toItem:nil attribute: NSLayoutAttributeNotAnAttribute];
     _heightConstraint = [_view addConstraintWithItem:self.frameImageView attribute:NSLayoutAttributeHeight toItem:nil attribute: NSLayoutAttributeNotAnAttribute];
-    
-    [_view addSubview:self.labelsHolderView];
-    
-    [_view addConstraintWithItem:self.labelsHolderView attribute:NSLayoutAttributeTop toItem:self.frameImageView];
-    [_view addConstraintWithItem:self.labelsHolderView attribute:NSLayoutAttributeRight toItem:self.frameImageView];
-    [_view addConstraintWithItem:self.labelsHolderView attribute:NSLayoutAttributeBottom toItem:self.frameImageView];
-    [_view addConstraintWithItem:self.labelsHolderView attribute:NSLayoutAttributeLeft toItem:self.frameImageView];
     
     return _view;
 }
@@ -496,80 +452,6 @@ using namespace std;
      result.recognizedExpireDateMonth = @"04";
      result.recognizedExpireDateYear = @"22";
      [self.delegate payCardsRecognizer:self didRecognize:result];
-}
-
-- (UIView *)labelsHolderView {
-    if (_labelsHolderView) {
-        return _labelsHolderView;
-    }
-    
-    _labelsHolderView = [[UIView alloc] init];
-    _labelsHolderView.translatesAutoresizingMaskIntoConstraints = NO;
-    
-    [_labelsHolderView addSubview:self.recognizedNumberLabel];
-    
-    [_labelsHolderView addConstraintWithItem:self.recognizedNumberLabel attribute:NSLayoutAttributeCenterX];
-    [_labelsHolderView addConstraintWithItem:self.recognizedNumberLabel attribute:NSLayoutAttributeCenterY toItem:_labelsHolderView attribute:NSLayoutAttributeCenterY constant:15];
-    
-    [_labelsHolderView addSubview:self.recognizedNameLabel];
-    
-    [_labelsHolderView addConstraintWithItem:self.recognizedNameLabel attribute:NSLayoutAttributeBottom toItem:_labelsHolderView attribute:NSLayoutAttributeBottom constant:-24];
-    [_labelsHolderView addConstraintWithItem:self.recognizedNameLabel attribute:NSLayoutAttributeLeft toItem:_labelsHolderView attribute:NSLayoutAttributeLeft constant:26];
-    
-    [_labelsHolderView addSubview:self.recognizedDateLabel];
-    
-    [_labelsHolderView addConstraintWithItem:self.recognizedDateLabel attribute:NSLayoutAttributeCenterX];
-    [_labelsHolderView addConstraintWithItem:self.recognizedDateLabel attribute:NSLayoutAttributeBottom toItem:_recognizedNameLabel attribute:NSLayoutAttributeTop constant:0];
-    
-    return _labelsHolderView;
-}
-
-- (UILabel *)recognizedNumberLabel {
-    if (_recognizedNumberLabel) {
-        return _recognizedNumberLabel;
-    }
-    
-    _recognizedNumberLabel = [[UILabel alloc] init];
-    _recognizedNumberLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    _recognizedNumberLabel.textColor = [UIColor whiteColor];
-    _recognizedNumberLabel.font = [UIFont systemFontOfSize:26];
-    _recognizedNumberLabel.text = @" ";
-    _recognizedNumberLabel.textAlignment = NSTextAlignmentCenter;
-    _recognizedNumberLabel.adjustsFontSizeToFitWidth = YES;
-
-    return _recognizedNumberLabel;
-}
-
-- (UILabel *)recognizedDateLabel {
-    if (_recognizedDateLabel) {
-        return _recognizedDateLabel;
-    }
-    
-    _recognizedDateLabel = [[UILabel alloc] init];
-    _recognizedDateLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    _recognizedDateLabel.textColor = [UIColor whiteColor];
-    _recognizedDateLabel.textAlignment = NSTextAlignmentCenter;
-    _recognizedDateLabel.text = @" ";
-    _recognizedDateLabel.font = [UIFont systemFontOfSize:17];
-    _recognizedDateLabel.adjustsFontSizeToFitWidth = YES;
-    
-    return _recognizedDateLabel;
-}
-
-- (UILabel *)recognizedNameLabel {
-    if (_recognizedNameLabel) {
-        return _recognizedNameLabel;
-    }
-    
-    _recognizedNameLabel = [[UILabel alloc] init];
-    _recognizedNameLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    _recognizedNameLabel.textColor = [UIColor whiteColor];
-    _recognizedNameLabel.textAlignment = NSTextAlignmentCenter;
-    _recognizedNameLabel.text = @" ";
-    _recognizedNameLabel.font = [UIFont systemFontOfSize:19];
-    _recognizedNameLabel.adjustsFontSizeToFitWidth = YES;
-    
-    return _recognizedNameLabel;
 }
 
 @end
