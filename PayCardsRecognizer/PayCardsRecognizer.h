@@ -61,6 +61,8 @@ typedef NS_OPTIONS(NSUInteger, PayCardsRecognizerDataMode) {
 
 - (void)turnTorchOn:(BOOL)on withValue:(float)value;
 
+- (void)showEdges:(BOOL)show;
+
 @end
 
 @protocol PayCardsRecognizerPlatformDelegate
