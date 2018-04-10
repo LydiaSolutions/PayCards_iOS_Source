@@ -315,6 +315,15 @@ using namespace std;
     });
 }
 
+- (void)showEdges:(BOOL)show {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [UIView animateWithDuration:0.2 animations:^{
+            _edgesWrapperView.alpha = show ? 1 : 0;
+            _frameImageView.alpha = show ? 1 : 0;
+        }];
+    });
+}
+
 - (void)positionUIEdges:(cv::Rect)windowRect {
     dispatch_async(dispatch_get_main_queue(), ^{
         float coef;
