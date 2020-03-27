@@ -29,6 +29,8 @@ cp -r "${SRCROOT}/build/${CONFIGURATION}-iphoneos/${FRAMEWORK_DEVICE}.framework"
 # a new version created by merging the device and simulator
 # frameworks' executables with lipo.
 lipo -create -output "${SRCROOT}/${FRAMEWORK_DEVICE}.framework/${FRAMEWORK_DEVICE}" "${SRCROOT}/build/${CONFIGURATION}-iphoneos/${FRAMEWORK_DEVICE}.framework/${FRAMEWORK_DEVICE}" "${SRCROOT}/build/${CONFIGURATION}-iphonesimulator/${FRAMEWORK_SIMULATOR}.framework/${FRAMEWORK_SIMULATOR}"
+lipo -remove x86_64 "${SRCROOT}/${FRAMEWORK_DEVICE}.framework/${FRAMEWORK_DEVICE}" -o "${SRCROOT}/${FRAMEWORK_DEVICE}.framework/${FRAMEWORK_DEVICE}"
+lipo -remove i386 "${SRCROOT}/${FRAMEWORK_DEVICE}.framework/${FRAMEWORK_DEVICE}" -o "${SRCROOT}/${FRAMEWORK_DEVICE}.framework/${FRAMEWORK_DEVICE}"
 
 # Fix simulator rpath
 install_name_tool -id "@rpath/${FRAMEWORK_DEVICE}.framework/${FRAMEWORK_DEVICE}" "${SRCROOT}/${FRAMEWORK_DEVICE}.framework/${FRAMEWORK_DEVICE}"
